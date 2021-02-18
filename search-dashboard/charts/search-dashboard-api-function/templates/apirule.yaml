@@ -1,0 +1,18 @@
+apiVersion: gateway.kyma-project.io/v1alpha1
+kind: APIRule
+metadata:
+  name: {{ include "search-dashboard-api-function.fullname" . }}
+spec:
+  gateway: kyma-gateway.kyma-system.svc.cluster.local
+  rules:
+    - path: /searchterms|/searchterms/.*
+      accessStrategies:
+        - config: {}
+          handler: noop
+      methods:
+        - GET
+        - POST
+  service:
+    host: {{ .Values.service.host }}
+    name: {{ include "search-dashboard-api-function.fullname" . }}
+    port: {{ .Values.service.port }}

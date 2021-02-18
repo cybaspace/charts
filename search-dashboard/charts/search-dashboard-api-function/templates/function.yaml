@@ -1,0 +1,127 @@
+apiVersion: serverless.kyma-project.io/v1alpha1
+kind: Function
+metadata:
+  name: {{ include "search-dashboard-api-function.fullname" . }}
+  labels:
+    {{- include "search-dashboard-api-function.labels" . | nindent 4 }}
+spec:
+  deps: "{ \n  \"name\": \"dbtester\",\n  \"version\": \"1.0.0\",\n  \"dependencies\":
+    {\n      \"mssql\": \"6.2.0\"\n  }\n}"
+  env:
+    - name: database
+      value: CommerceSearchDB
+    - name: host
+      value: {{ .Release.Name }}-search-dashboard-db-service.{{ .Release.Namespace }}.svc.cluster.local
+    - name: password
+      value: Surprise666
+    - name: username
+      value: sa
+  source: "const sql = require('mssql')\n
+\n
+           const config = {\n
+               user: process.env.username,\n
+               password: process.env.password,\n
+               server: process.env.host,\n
+               database: process.env.database,\n
+           }\n
+\n
+           module.exports = {\n
+               main: async function (event, context) {\n
+                   try {\n
+                       const method = event.extensions.request.method\n
+                       const searchterm = event.extensions.request.path.split(\"/\")[2];\n
+                       const pool = await sql.connect(config)\n
+                       const request = new sql.Request()\n
+\n
+                       switch (method) {\n
+                           case \"GET\":\n
+                               if (searchterm) {\n
+                                   return await getSearchterm(request, searchterm);\n
+                               } else {\n
+                                   return await getSearchterms(request);\n
+                               }\n
+                           case \"POST\":\n
+                               return await addSearchterm(request, event.data, event[\"ce-type\"]);\n
+                           default:\n
+                               event.extensions.response.status(500).json({\n
+                                   \"message\": \"Unhandled method was received\", \"error\": \"Unhandled method was received\"\n
+                               });\n
+                       }\n
+                   } catch (err) {\n
+                       // ... error checks\n
+                       console.log(\"ERROR catch: \", err);\n
+                       event.extensions.response.status(500).json({\n
+                           \"message\": \"An error occurred during execution\", \"error\": err\n
+                       });\n
+                   }\n
+\n
+                   sql.on('error',\n
+                       err => {\n
+                           // ... error handler\n
+                           console.log(\"ERROR handler: \", error);\n
+                           event.extensions.response.status(500).json({\n
+                               \"message\": \"Connection to the database could not be established\", \"error\": err\n
+                           });\n
+                       })\n
+               }\n
+           }\n
+\n
+           async function getSearchterms(request) {\n
+               try {\n
+                   let result = await request.query('select * from Searchterms order by created desc')\n
+                   return result.recordsets[0];\n
+               } catch (err) {\n
+                   throw err;\n
+\n
+               }\n
+           }\n
+\n
+           async function getSearchterm(request, searchterm) {\n
+               try {\n
+                   let result = await request.query(`select * from Searchterms where searchterm = '${searchterm}' order by created desc`)\n
+                   return result.recordsets[0];\n
+               } catch (err) {\n
+                   throw err;\n
+               }\n
+           }\n
+\n
+           async function addSearchterm(request, data, eventtype) {\n
+               console.log(\"received event: \"+eventtype)\n
+               switch (eventtype) {\n
+                   case \"tracking.search\":\n
+                       return addNewSearchterm(request, data, 0)\n
+                   case \"tracking.searchnoresults\":\n
+                       return addNewSearchterm(request, data, 1)\n
+                   case \"tracking.refinesearch\":\n
+                       return updateSearchterm(request, data, 'refined')\n
+                   case \"tracking.pagethroughsearchresults\":\n
+                       return updateSearchterm(request, data, 'pagechanged')\n
+                   default:\n
+                       throw {\n
+                           \"name\": \"UnsupportedEventtypeException\",\n
+                           \"message\": \"Eventtype ${eventtype} is not supported\"\n
+                       }\n
+               }\n
+           }\n
+\n
+           async function addNewSearchterm(request, data, noresult) {\n
+               console.log(\"add searchterm \"+data.searchterm+\", with noresult: \"+noresult)\n
+               try {\n
+                   let result = await request.query(\n
+                       `insert into Searchterms (searchterm, basesiteid, noresult, userid) values ('${data.searchterm}', '${data.baseSiteUid}', ${noresult}, '${data.userId}'); select * from Searchterms where searchterm = '${data.searchterm}'`);\n
+                   return result.recordsets[0];\n
+               } catch (err) {\n
+                   throw err\n
+               }\n
+           }\n
+\n
+           async function updateSearchterm(request, data, column) {\n
+               console.log(\"update searchterm for user \"+data.userId+\" on column \"+column)\n
+               try {\n
+                   let result = await request.query(\n
+                       `update top (1) Searchterms set ${column}=${column}+1 where userid='${data.userId}' order by created; select * from Searchterms where userid='${data.userId}' order by created`);\n
+                   return result.recordsets[0];\n
+               } catch (err) {\n
+                   throw err\n
+               }\n
+           }"

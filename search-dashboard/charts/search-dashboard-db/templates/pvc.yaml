@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ include "search-dashboard-db.fullname" . }}
+  name: {{ include "search-dashboard-db.fullname" . }}-data
   labels:
     {{- include "search-dashboard-db.labels" . | nindent 4 }}
 spec:

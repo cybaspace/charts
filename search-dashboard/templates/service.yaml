@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "search-dashboard-frontend.fullname" . }}-service
+  labels:
+    {{- include "search-dashboard-frontend.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "search-dashboard-frontend.selectorLabels" . | nindent 4 }}

@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "search-dashboard-db.fullname" . }}
+  name: {{ include "search-dashboard-api-function.fullname" . }}
   labels:
-    {{- include "search-dashboard-db.labels" . | nindent 4 }}
+    {{- include "search-dashboard-api-function.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "search-dashboard-db.selectorLabels" . | nindent 6 }}
+      {{- include "search-dashboard-api-function.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,12 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "search-dashboard-db.selectorLabels" . | nindent 8 }}
+        {{- include "search-dashboard-api-function.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      serviceAccountName: {{ include "search-dashboard-api-function.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -34,26 +35,18 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
-          env:
-            - name: MSSQL_PID
-              value: "Developer"
-            - name: ACCEPT_EULA
-              value: "Y"
-            - name: SA_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: search-dashboard-db
-                  key: password
-          volumeMounts:
-            - name: search-dashboard-db
-              mountPath: /var/opt/mssql
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-      volumes:
-        - name: search-dashboard-db
-          persistentVolumeClaim:
-            claimName: search-dashboard-db-data
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
