@@ -7,11 +7,13 @@ replicaCount: 1
 image:
   repository: maihiro/fe-ui5-searchterm
   pullPolicy: IfNotPresent
+
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
 cluster:
-  domain: kyma.local
+  # TODO: Environment variable for domain!
+  domain: null
 
 imagePullSecrets: []
 nameOverride: ""

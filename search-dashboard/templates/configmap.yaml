@@ -7,5 +7,5 @@ metadata:
 data:
   config.json: |-
     {
-      "API_URL": "https://search-dashboard-api.{{ .Values.cluster.domain }}"
+      "API_URL": "https://search-dashboard-api.{{ required "You must provide a cluster domain (use --set cluster.domain=<domain>)" .Values.cluster.domain }}"
     }

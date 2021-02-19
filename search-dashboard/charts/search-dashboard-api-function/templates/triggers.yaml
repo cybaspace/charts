@@ -1,0 +1,18 @@
+{{- $functioname := include "search-dashboard-api-function.fullname" . }}{{- $serviceport := .Values.service.port }}{{- $releasename := .Release.Name }}
+{{- range $index, $trigger := .Values.triggers }}
+apiVersion: eventing.knative.dev/v1alpha1
+kind: Trigger
+metadata:
+  name: {{ $functioname }}-trigger-{{ $trigger.name }}
+spec:
+  broker: default
+  filter:
+    attribute:
+      eventtypeversion: {{ $trigger.eventtypeversion | default "v1" }}
+      source: {{ $trigger.app }}
+      type: {{ $trigger.eventtype }}
+  subscriber:
+    ref:
+      Uri:  http://{{ $releasename }}-{{ $functioname }}.svc.cluster.local:{{ $serviceport }}/
+---
+{{- end }}
