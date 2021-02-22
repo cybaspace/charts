@@ -3,12 +3,12 @@ entries:
   search-dashboard:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2021-02-22T11:54:36.771435+01:00"
+    created: "2021-02-22T12:53:43.354211+01:00"
     description: SAP Commerce dashboard of searched terms
-    digest: ac885440bd1d95424ce8af44395d840826982a73689d95304d47fb23425fcd28
+    digest: 64badbd06023096d886c07efdf5db3963f770982c19aba329514f167ef06b1c4
     name: search-dashboard
     type: application
     urls:
     - search-dashboard-0.2.0.tgz
     version: 0.2.0
-generated: "2021-02-22T11:54:36.768906+01:00"
+generated: "2021-02-22T12:53:43.35228+01:00"

@@ -14,7 +14,7 @@ spec:
       type: {{ $trigger.eventtype }}
   subscriber:
     ref:
-      Uri: http://{{ $releasename }}-{{ $functioname }}.svc.cluster.local:{{ $serviceport }}/
+      Uri: http://{{ $functioname }}.svc.cluster.local:{{ $serviceport }}/
 ---
 {{- end }} # range triggers
 {{- end }} # if commerce.app.name

@@ -12,8 +12,10 @@ nameOverride: ""
 fullnameOverride: ""
 
 triggers:
-  - eventtype: tracking.search
-  - eventtype: tracking.searchnoresults
+  - name: search
+    eventtype: tracking.search
+  - name: searchnoresults
+    eventtype: tracking.searchnoresults
 
 commerce:
   app:
