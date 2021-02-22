@@ -1,2 +1,4 @@
-You could open the search dashboard with:
+
+Give the system a minute to install the search dashboard app ...
+Then you can open the search dashboard in your browser:
   https://search-dashboard.{{.Values.cluster.domain }}

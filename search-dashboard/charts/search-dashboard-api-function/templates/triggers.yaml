@@ -1,5 +1,9 @@
 {{- if .Values.commerce.app.name }}
-{{- $functioname := include "search-dashboard-api-function.fullname" . }}{{- $serviceport := .Values.service.port }}{{- $releasename := .Release.Name }}{{- $source := .Values.commerce.app.name }}
+{{- $functioname := include "search-dashboard-api-function.fullname" . }}
+  {{- $serviceport := .Values.service.port }}
+  {{- $releasename := .Release.Name }}
+  {{- $namespace := .Release.Namespace }}
+  {{- $source := .Values.commerce.app.name }}
 {{- range $index, $trigger := .Values.triggers }}
 apiVersion: eventing.knative.dev/v1alpha1
 kind: Trigger
@@ -8,13 +12,12 @@ metadata:
 spec:
   broker: default
   filter:
-    attribute:
+    attributes:
       eventtypeversion: {{ $trigger.eventtypeversion | default "v1" }}
       source: {{ $source }}
       type: {{ $trigger.eventtype }}
   subscriber:
-    ref:
-      Uri: http://{{ $functioname }}.svc.cluster.local:{{ $serviceport }}/
+    uri: http://{{ $functioname }}.{{ $namespace }}.svc.cluster.local:{{ $serviceport }}/
 ---
 {{- end }} # range triggers
 {{- end }} # if commerce.app.name
