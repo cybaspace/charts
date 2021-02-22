@@ -1,14 +1,14 @@
 apiVersion: v1
 entries:
-  search-dashboard-db:
+  search-dashboard:
   - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2021-02-16T17:07:11.700164+01:00"
-    description: A Helm chart for Kubernetes
-    digest: 6c7ce3863bde700af3b9798349a9c65aceebe91ee78be57f427391b1245bd0c0
-    name: search-dashboard-db
+    appVersion: 1.0.0
+    created: "2021-02-22T11:54:36.771435+01:00"
+    description: SAP Commerce dashboard of searched terms
+    digest: ac885440bd1d95424ce8af44395d840826982a73689d95304d47fb23425fcd28
+    name: search-dashboard
     type: application
     urls:
-    - https://cybaspace.github.io/charts/search-dashboard-db-0.1.0.tgz
-    version: 0.1.0
-generated: "2021-02-16T17:07:11.699125+01:00"
+    - search-dashboard-0.2.0.tgz
+    version: 0.2.0
+generated: "2021-02-22T11:54:36.768906+01:00"

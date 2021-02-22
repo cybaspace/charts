@@ -1,1 +1,2 @@
-Nothing to show here ...
+You could open the search dashboard with:
+  https://search-dashboard.{{.Values.cluster.domain }}

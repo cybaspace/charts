@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "search-dashboard-frontend.name" -}}
+{{- define "search-dashboard.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "search-dashboard-frontend.fullname" -}}
+{{- define "search-dashboard.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "search-dashboard-frontend.chart" -}}
+{{- define "search-dashboard.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "search-dashboard-frontend.labels" -}}
-helm.sh/chart: {{ include "search-dashboard-frontend.chart" . }}
-{{ include "search-dashboard-frontend.selectorLabels" . }}
+{{- define "search-dashboard.labels" -}}
+helm.sh/chart: {{ include "search-dashboard.chart" . }}
+{{ include "search-dashboard.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,7 +45,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "search-dashboard-frontend.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "search-dashboard-frontend.name" . }}
+{{- define "search-dashboard.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "search-dashboard.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

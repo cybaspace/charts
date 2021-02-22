@@ -1,34 +1,35 @@
 # Commerce search dashboard chart
 
-## Set the cluster domain
+## Installation
+Install the search dashboard chart
+```
+helm install <release> mai-repo/search-dashboard <options>
+```
+
+### Mandatory installation parameters
+The namespace in which the dashboard should be installed must be provided.
+e.d.
+```shell
+helm install <release> mai-repo/search-dashboard --namespace commercesearch
+```
 The public reachable cluster domain must be provided.  
 e.g.
-```
+```shell
 helm install <release> mai-repo/search-dashboard --set cluster.domain=xxxx.kyma.shoot.live.k8s-hana.ondemand.com
 ```
 
-## Add triggers to function
-To add triggers to the api function a list of triggers must be declared in a yaml file which then can be used in the installation.
+### Optional installation parameters
+If kyma and the SAP commerce already connected apply the name of application under which SAP Commerce is registered in kyma to automatically create triggers to the function.  
+e.g.
+```shell
+helm install <release> mai-repo/search-dashboard --set search-dashboard-api-function.commerce.app.name=sapcommerce
 ```
-search-dashboard-api-function:
-  triggers:
-    - name: <name>
-      eventtype: <eventtype>
-      eventtypeversion: <version>
-      app: <application-name>
-```
-`eventypeversion` is optional (default is `v1`)
 
-If a file `values.yaml` with following content exists
-```
-search-dashboard-api-function:
-  triggers:
-    - name: search
-      eventtype: tracking.search
-      app: commerce-cloud
-    - name: searchnoresults
-      eventtype: tracking.searchnoresults
-      app: commerce-cloud
-```
-the installation can be started with  
-`helm install -f values.yaml search-dashboard mai-repo/search-dashboard`
+## After Installation
+If the commerce app name is not supplied during installation no triggers would be created.  
+First connect SAP commerce with the kyma installation.  
+In kyma choose the namespace in which search dashboard is installed, goto functions and open the installed search-dashboard-api-function.  
+Open the tab _Configuration_ and press button `+ Add Event Trigger`, search for the `tracking.search` and `tracking.searchnoresults` and add them to the function.
+
+## Open search dashboard
+In kyma goto the namespace, choose _API Rules_ and click on the `Host` link in the row of search-dashboard.

@@ -1,7 +1,7 @@
 apiVersion: gateway.kyma-project.io/v1alpha1
 kind: APIRule
 metadata:
-  name: {{ include "search-dashboard-frontend.fullname" . }}
+  name: {{ include "search-dashboard.fullname" . }}
 spec:
   gateway: kyma-gateway.kyma-system.svc.cluster.local
   rules:
@@ -13,5 +13,5 @@ spec:
         - GET
   service:
     host: {{ .Values.service.host }}
-    name: {{ include "search-dashboard-frontend.fullname" . }}-service
+    name: {{ include "search-dashboard.fullname" . }}-service
     port: {{ .Values.service.port }}

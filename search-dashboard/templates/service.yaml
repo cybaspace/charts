@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "search-dashboard-frontend.fullname" . }}-service
+  name: {{ include "search-dashboard.fullname" . }}-service
   labels:
-    {{- include "search-dashboard-frontend.labels" . | nindent 4 }}
+    {{- include "search-dashboard.labels" . | nindent 4 }}
 spec:
   ports:
     - port: {{ .Values.service.port }}
@@ -11,4 +11,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "search-dashboard-frontend.selectorLabels" . | nindent 4 }}
+    {{- include "search-dashboard.selectorLabels" . | nindent 4 }}

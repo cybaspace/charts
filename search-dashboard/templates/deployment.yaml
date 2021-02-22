@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "search-dashboard-frontend.fullname" . }}
+  name: {{ include "search-dashboard.fullname" . }}
   labels:
-    {{- include "search-dashboard-frontend.labels" . | nindent 4 }}
+    {{- include "search-dashboard.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "search-dashboard-frontend.selectorLabels" . | nindent 6 }}
+      {{- include "search-dashboard.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "search-dashboard-frontend.selectorLabels" . | nindent 8 }}
+        {{- include "search-dashboard.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -51,7 +51,7 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: {{ include "search-dashboard-frontend.fullname" . }}-cfgmap
+            name: {{ include "search-dashboard.fullname" . }}-cfgmap
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
