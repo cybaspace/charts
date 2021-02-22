@@ -1,5 +1,11 @@
 # Commerce search dashboard chart
 
+## Using this repo
+To use this repo add it to your helm repos with
+```shell
+helm repo add mai-repo https://cybaspace.github.io/charts
+```
+
 ## Preconditions
 If you want a one-stop-installation resulting in a ready-to-use dashboard you must first connect SAP Commerce with kyma and then provide the application name in the installation (s. optional installation parameters).
 ## Installation
