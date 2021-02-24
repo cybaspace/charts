@@ -6,8 +6,43 @@ To use this repo add it to your helm repos with
 helm repo add mai-repo https://cybaspace.github.io/charts
 ```
 
-## Preconditions
+## Preparations
+### SAP Commerce preparation
+To use the dashboard the searched terms must be transfered from SAP Commerce to the search dashboard service.  
+Out of the box the search events only transfer _user_ and _base site id_. To enable the transfer of search terms the following impex must be executed in SAP Commerce.  
+In this impex the _Default_Template_ will be configured. This will affect only destination targets (connections to kyma) that will be created in future.  
+If an already created kyma connection should be configured the destination target should point to this target.
+```impex
+$destination_target=Default_Template
+INSERT_UPDATE EventPropertyConfiguration;eventConfiguration(eventClass,destinationTarget(id[default=$destination_target]),version[default=1])[unique=true];propertyName[unique=true];propertyMapping;title;description;examples(key, value)[map-delimiter = |];required[default=true];type[default='string'];
+"#% beforeEach:
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import de.hybris.platform.apiregistryservices.exceptions.EventPropertyConfigurationException;
+import de.hybris.platform.apiregistryservices.utils.EventPropertyConfigurationValidationUtils;
+String eventClass = line.get(Integer.valueOf(1));
+String eventPC = line.get(Integer.valueOf(3));
+try {
+    Class.forName(eventClass);
+} catch (ClassNotFoundException e) {
+    line.clear();
+}
+
+try {
+    EventPropertyConfigurationValidationUtils.validPropertyMapping(eventClass, eventPC);
+} catch (EventPropertyConfigurationException e) {
+    Logger LOG = LoggerFactory.getLogger(""ImpExImportReader"");
+    LOG.info(""Event property configuration of event was skipped. {}"", e.getMessage());
+    line.clear();
+}
+"
+;de.hybris.eventtracking.model.events.SearchEvent          ; searchterm ; "event.searchTerm" ; "Search term" ; Search term user entered ; searchterm->sunglasses
+;de.hybris.eventtracking.model.events.SearchNoResultsEvent ; searchterm ; "event.searchTerm" ; "Search term" ; Search term user entered ; searchterm->totallynonsense
+```
+
+### Kyma preparation
 If you want a one-stop-installation resulting in a ready-to-use dashboard you must first connect SAP Commerce with kyma and then provide the application name in the installation (s. optional installation parameters).
+
 ## Installation
 Install the search dashboard chart
 ```
